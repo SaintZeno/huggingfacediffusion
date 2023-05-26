@@ -37,3 +37,10 @@ params:
   save_denoising_iterations: True ## True/False - save every iteration of the denoising loop
 ```
 
+# TODO:: 
+-bug in file saving 
+-save config file when saving final image
+-improve config explaination in readme
+-add examples to readme
+
+
