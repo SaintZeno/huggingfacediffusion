@@ -23,6 +23,7 @@ Execute the `main` script which can be executed to generate images for the `prom
 python main.py
 
 The config file can be edited to adjust how the diffusion process runs; even allowing the ablility to change the Hugging Face transformers/diffusers used to construct the diffusion pipeline (still in beta for some). See below for `params` section of config.
+```
 params:
   seed: 1 ## random seed - change to get a different latent image from the encoder
   num_inference_steps: 50 ## number of iterations in the denoising loop
@@ -34,5 +35,5 @@ params:
   show_image: False ## show the denoised image while running
   output_dir: location1/location2/location3 ## output directory
   save_denoising_iterations: True ## True/False - save every iteration of the denoising loop
-
+```
 
