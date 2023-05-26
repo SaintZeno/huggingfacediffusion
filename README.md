@@ -6,13 +6,13 @@ The embbeded latent images coming from NLP models are funky and throwing diffusi
 
 # Quick install
 
-##create your virtual environment (maintained in python 3.10)
+##create your virtual environment (maintained in python 3.10)\n
 python3.10 -m venv venv
 ##activate the env
 venv\scripts\activate
 ##install pytorch https://pytorch.org/
 ##can copy/paste the command from torch site
-## pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+##pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 #pip install the requirements
 pip install -r requirements.txt
 
