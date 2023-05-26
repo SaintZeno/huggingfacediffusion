@@ -6,7 +6,8 @@ The embbeded latent images coming from NLP models are funky and throwing diffusi
 
 # Quick install
 
-##create your virtual environment (maintained in python 3.10)\n
+##create your virtual environment (maintained in python 3.10)
+
 python3.10 -m venv venv
 ##activate the env
 venv\scripts\activate
