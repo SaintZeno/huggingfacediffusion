@@ -1,0 +1,43 @@
+prompt: stable diffusion
+torch_device: cuda # cpu, cuda
+vae: 
+  name: AutoencoderKL
+  module: diffusers
+  pretrained_dir: runwayml/stable-diffusion-v1-5
+  subfolder: vae
+tokenizer:
+  name: CLIPTokenizer
+  module: transformers
+  pretrained_dir: runwayml/stable-diffusion-v1-5
+  subfolder: tokenizer
+text_encoder:
+  name: CLIPTextModel
+  module: transformers
+  pretrained_dir: runwayml/stable-diffusion-v1-5
+  subfolder: text_encoder
+model:
+  name: UNet2DConditionModel
+  module: diffusers
+  pretrained_dir: runwayml/stable-diffusion-v1-5
+  subfolder: unet
+scheduler:
+  name: UniPCMultistepScheduler
+  module: diffusers
+  pretrained_dir: runwayml/stable-diffusion-v1-5
+  subfolder: scheduler
+params:
+  seed: 1
+  num_inference_steps: 50
+  guidance_scale_min: 10
+  guidance_scale_max: 10
+  guidance_scale_random: False
+  height: 512
+  width: 512
+  show_image: False
+  output_dir: location/
+  save_denoising_iterations: True
+
+
+
+
+
