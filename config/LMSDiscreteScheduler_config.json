@@ -1,0 +1,10 @@
+{
+  "_class_name": "LMSDiscreteScheduler",
+  "_diffusers_version": "0.16.1",
+  "beta_end": 0.012,
+  "beta_schedule": "scaled_linear",
+  "beta_start": 0.00085,
+  "num_train_timesteps": 1000,
+  "prediction_type": "epsilon",
+  "trained_betas": null
+}

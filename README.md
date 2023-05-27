@@ -42,5 +42,5 @@ params:
 -save config file when saving final image
 -improve config explaination in readme
 -add examples to readme
-
+-add scipy to requirements; needed for LMSDiscreteScheduler
 

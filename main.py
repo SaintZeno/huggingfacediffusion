@@ -1,4 +1,3 @@
-import importlib
 import os
 import yaml
 import transformers
@@ -11,7 +10,10 @@ from PIL import Image
 def instantiate_hf_object(module, params):
     #print(f'instantiating {params["name"]} from {module}')
     func = getattr(module, params['name'])
-    return func.from_pretrained(params['pretrained_dir'], subfolder=params['subfolder'])
+    if params.get('subfolder'):
+        return func.from_pretrained(params['pretrained_dir'], subfolder=params.get('subfolder'))
+    else:
+        return func.from_pretrained(params['pretrained_dir'])
 
 def instantiate_object_choice(params):
     if params['module'] == 'diffusers':
@@ -47,19 +49,39 @@ class Diffuse():
             self.run_pipeline()
             self.show_denoised_image()
             self.store_denoised_image()
+            self.store_config()
         
-
     def show_denoised_image(self):
         if self.config['params']['show_image']:
             self.image.show()
 
     def store_denoised_image(self):
-        self.image.save(self.output_path + f'complete_denoised_image.png')
+        self.image.save(os.path.join(self.output_path, 'complete_denoised_image.png'))
+
+    def store_config(self):
+        with open(os.path.join(self.output_path, 'pipeline.yml'), 'w') as f:
+            yaml.dump(self.config, f)
+            
         
     def create_output_dirs(self):
         alnum_prompt=''.join(e for e in self.prompt[0] if e.isalnum())
-        self.output_path = f'{self.config["params"]["output_dir"]}\\{alnum_prompt}\\'
-        granular_path = self.output_path + f'iterations\\'
+        #output_dirname_type: pipeline #generic
+        if self.config['params']['output_dirname_type']  == 'pipeline':
+            suff='_'.join([self.config[i]["name"] for i in ['vae', 'tokenizer', 'text_encoder', 'model', 'scheduler']])
+            suff+='_'+'_'.join([k+f'{v}' for k,v in self.config['params'].items() if k in ['num_inference_steps', 'seed']])
+            suff+=f'_guidance{self.guidance_scale}'
+        elif self.config['params']['output_dirname_type']  == 'generic':
+            suff=''
+        else: 
+            raise Exception('no `output_dirname_type` provided')
+        
+        if self.config['params'].get('output_dir'):
+            self.output_path = os.path.join(self.config["params"]["output_dir"], alnum_prompt, suff)
+        else:
+            self.output_path = os.path.join(os.path.abspath("results"), alnum_prompt, suff)
+        
+        granular_path = os.path.join(self.output_path, 'iterations')
+        
         if not os.path.exists(granular_path):
             os.makedirs(granular_path)
         
@@ -137,18 +159,18 @@ class Diffuse():
             # compute the previous noisy sample x_t -> x_t-1
             latents = scheduler.step(noise_pred, t, latents).prev_sample
             if self.config['params']['save_denoising_iterations']:
-                self.latents_to_image(latents, vae=vae).save(self.output_path + f'iterations\\iteration_{t}.png')
+                self.latents_to_image(latents, vae=vae).save(os.path.join(self.output_path, 'iterations', f'iteration_{t}.png'))
         ## save image on self
         self.image = self.latents_to_image(latents=latents, vae=vae)
         
     def latents_to_image(self, latents, vae):
         # scale and decode the image latents with vae
-        
         latents_scale = 1 / 0.18215 * latents
+        
         with torch.no_grad():
             image = vae.decode(latents_scale).sample
 
-        image = (image / 2 + 0.5).clamp(0, 1) ## again, random constants!
+        image = (image / 2 + 0.5).clamp(0, 1)
         image = image.detach().cpu().permute(0, 2, 3, 1).numpy()
         images = (image * 255).round().astype("uint8")
         pil_images = [Image.fromarray(image) for image in images]
