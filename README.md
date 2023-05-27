@@ -19,28 +19,37 @@ pip install -r requirements.txt
 
 
 # Usage 
-Execute the `main` script which can be executed to generate images for the `prompt` in the `pipeline` configuration file (pipeline.yaml)
-python main.py
-
+`python main.py` 
+Runs the main script which will generate images corresponding to the `prompt` in the pipeline configuration file (`pipeline.yml`)
 The config file can be edited to adjust how the diffusion process runs; even allowing the ablility to change the Hugging Face transformers/diffusers used to construct the diffusion pipeline (still in beta for some). See below for `params` section of config.
 ```
 params:
-  seed: 1 ## random seed - change to get a different latent image from the encoder
-  num_inference_steps: 50 ## number of iterations in the denoising loop
+  seed: ## random seed - change to get a different latent image from the encoder
+  num_inference_steps: 55 ## number of iterations in the denoising loop
   guidance_scale_min: 10 ## learning rate min (if min<max then a file for each will be created)
-  guidance_scale_max: 10 ## learning rate max 
-  guidance_scale_random: False ## use a random learning rate for each denoising iteration
+  guidance_scale_max: 10 ## learning rate max (if min<max then a file for each will be created)
+  guidance_scale_random: False ## use a random learning rate for each denoising iteration (guidance min and max are ignored if this is True)
   height: 512 ## height of the output image; recommend multiples of 8
   width: 512 ## width of the output image; recommend multiples of 8
   show_image: False ## show the denoised image while running
-  output_dir: location1/location2/location3 ## output directory
-  save_denoising_iterations: True ## True/False - save every iteration of the denoising loop
+  #output_dir: location1/location2 ## output directory; if missing then images will be save to "results" directory
+  output_dirname_type: pipeline ## pipeline or generic; generic creates no additional subfolders to output_dir
+  save_denoising_iterations: False ## True/False - save every iteration of the denoising loop
 ```
 
+# Example: Change scheduler
+Simply adjust the `scheduler` section of pipeline config to grab whatever scheduler you want. See the following for an example using the LMSDiscrete Scheduler and local model config.
+```
+scheduler:
+  name: LMSDiscreteScheduler #UniPCMultistepScheduler #PNDMScheduler #LMSDiscreteScheduler #EulerDiscreteScheduler 
+  module: diffusers
+  pretrained_dir: ./config/LMSDiscreteScheduler_config.json #runwayml/stable-diffusion-v1-5 #./config/LMSDiscreteScheduler_config.json #./config/EulerDiscreteScheduler_config
+  subfolder: scheduler
+```
+
+
 # TODO:: 
--bug in file saving 
--save config file when saving final image
 -improve config explaination in readme
--add examples to readme
--add scipy to requirements; needed for LMSDiscreteScheduler
+-testing suite
+
 
